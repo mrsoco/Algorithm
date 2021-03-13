@@ -66,7 +66,7 @@ public:
     };
 
 public:
-    static Node* CreateNode(const_reference value = nullptr, Node* child = nullptr, Node* brother = nullptr);
+    static Node* CreateNode(const_reference value, Node* child = nullptr, Node* brother = nullptr);
     static Node* CreateNode(const_pointer value = nullptr, Node* child = nullptr, Node* brother = nullptr);
 
     explicit Tree(const Node* root = nullptr);
@@ -76,11 +76,17 @@ public:
     Node* RootFirstChild() const;
     Node* RootFirstBrother() const;
 
+
 public:
     bool empty();
     const Node* root() const { return root_;}
 
+    Node* Find(const_reference value);
+
     Tree& InsertChild(const Node* target, size_type pos, Node* node);
+
+private:
+    void search(Node*& result, const Node* node, const_reference value);
 
 private:
     Node* root_;
@@ -181,6 +187,36 @@ typename Tree<Tp>::Node *Tree<Tp>::RootFirstBrother() const {
     }
 
     return root_->child()->brother();
+}
+
+template<typename Tp>
+typename Tree<Tp>::Node *Tree<Tp>::Find(const_reference value) {
+    Node* result = nullptr;
+
+    if (search(result, root_, value)) {
+        return result;
+    }
+
+    return nullptr;
+}
+
+template<typename Tp>
+void Tree<Tp>::search(Tree::Node *&result, const Tree::Node *node, const_reference value) {
+    if (node == nullptr) {
+        return;
+    }
+
+    if (node->value() == value) {
+        result = node;
+        return;
+    }
+
+    search(result, node->child(), value);
+    if (result != nullptr) {
+        return;
+    }
+
+    search(result, node->brother(), value);
 }
 
 
